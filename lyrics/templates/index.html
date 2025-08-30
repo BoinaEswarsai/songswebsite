@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8">
+  <title>అమ్మ పాటల సాహిత్యం</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    async function loadSongs() {
+      let response = await fetch("/songs/");
+      let songs = await response.json();
+      let list = document.getElementById("songList");
+      list.innerHTML = "";
+      songs.forEach(song => {
+        let btn = document.createElement("button");
+        btn.className = "w-full text-left p-3 bg-pink-100 rounded-lg hover:bg-pink-200";
+        btn.innerText = song.title;
+        btn.onclick = () => loadLyrics(song.id);
+        list.appendChild(btn);
+      });
+    }
+
+    async function loadLyrics(id) {
+      let response = await fetch(`/songs/${id}/`);
+      let song = await response.json();
+      document.getElementById("lyricsTitle").innerText = song.title;
+      document.getElementById("lyricsText").innerText = song.lyrics;
+    }
+
+    function zoomIn() {
+      let text = document.getElementById("lyricsText");
+      let size = parseInt(window.getComputedStyle(text).fontSize);
+      text.style.fontSize = (size + 4) + "px";
+    }
+
+    function zoomOut() {
+      let text = document.getElementById("lyricsText");
+      let size = parseInt(window.getComputedStyle(text).fontSize);
+      text.style.fontSize = (size - 4) + "px";
+    }
+
+    window.onload = loadSongs;
+  </script>
+</head>
+<body class="bg-gradient-to-r from-pink-200 to-yellow-100 min-h-screen flex flex-col items-center p-6 font-sans">
+
+  <h1 class="text-3xl font-bold text-pink-700 mb-6">🌸 మా అమ్మ పాటల సాహిత్యం 🌸</h1>
+
+  <div class="grid md:grid-cols-2 gap-6 w-full max-w-5xl">
+    <!-- Song List -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <h2 class="text-xl font-semibold text-purple-700 mb-4">🎶 పాటల జాబితా</h2>
+      <div id="songList" class="space-y-3"></div>
+    </div>
+
+    <!-- Lyrics Section -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col">
+      <h2 id="lyricsTitle" class="text-xl font-semibold text-purple-700 mb-4">పాటను ఎంచుకోండి 🎵</h2>
+      <pre id="lyricsText" class="flex-1 text-lg leading-relaxed whitespace-pre-wrap text-gray-800">ఇక్కడ పాట సాహిత్యం చూపబడుతుంది...</pre>
+
+      <div class="flex justify-end mt-4 space-x-3">
+        <button onclick="zoomIn()" class="px-4 py-2 bg-green-400 text-white rounded-xl shadow-md hover:bg-green-500">Zoom +</button>
+        <button onclick="zoomOut()" class="px-4 py-2 bg-red-400 text-white rounded-xl shadow-md hover:bg-red-500">Zoom -</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
